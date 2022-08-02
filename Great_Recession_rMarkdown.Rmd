@@ -1,0 +1,1327 @@
+---
+title: "Visualizing Impact of Great Recession"
+author: "Deeksha Patil"
+date: "4/10/2022"
+runtime: shiny
+output: 
+  flexdashboard::flex_dashboard:
+      vertical_layout: fill
+---
+
+```{r Libraries, include=FALSE, message=FALSE}
+
+library(tidyverse)
+library(DT)
+library(Hmisc)
+library(lubridate)
+library(plotly)
+library(gridExtra)
+library(maps)
+library(shiny)
+library(shinydashboard)
+library (readxl)
+ 
+```
+
+```{r Global knitr Setup, include=FALSE, echo=FALSE, message=FALSE, warning=FALSE}
+
+knitr::opts_chunk$set(
+	#Chunk Code Options
+	echo = FALSE, # Show the code in the output
+	include = TRUE, # Show the results in the output.
+	
+	message = FALSE, # messages generated from code are not shown.
+	warning = FALSE, # warnings generated from code are not shown.
+	
+	results = 'asis', # no additional formatting is applied to the results
+	comment = NA, 
+	
+	# don't add the prompt character in R Code, i.e., 
+	# don't stop to ask the user for execution
+	prompt = FALSE, 	
+	
+	# # Plot Options - set the width and height (in inches) of all plots generated.
+	# fig.height = 6,
+	# fig.width = 8,
+	# 
+	# fig.retina only applies to html output 
+	# controls the quality (dpi) of the image.
+	fig.retina = 2,
+	
+	# default alignment of all figures.
+	fig.align = 'center'
+)
+
+# round all decimals to 4 digits (after the decimal),
+# unless specified otherwise in the local options. 
+options(digits = 4)
+
+```
+
+```{r load data, include = FALSE, echo=FALSE}
+
+unr <- read_xlsx("Aggregated_unr.xlsx")
+educ_rate <- read_xls("education rate (Recession).xls")
+deaths <-  read_xlsx("Deaths.xlsx")
+ment_heal <- read_csv("mental_health.csv")
+housing <- read_xlsx("Archived Zillow Data.xlsx")
+per_capita <- read_xls("Personal_Income.xls")
+
+``` 
+
+
+# Unemployment
+
+
+#### {}
+
+<h2>Its impact on Select States.</h2>
+
+## Column{.tabset}
+
+### California
+```{r}
+
+
+g <- data.frame(
+	year = c(2004, 2008, 2014),
+	rate_unemployment = c(6.0, 5.0, 8.0),
+	label=unr %>% select(`Period`) %>% unique()
+	
+)
+
+unr %>% 
+	filter(State =="California") %>% 
+	ggplot(aes(x=year, y = `rate_unemployment`))+
+	geom_col(aes(fill=`Period`) , alpha=0.6, position = "dodge")+
+	geom_path(size=2)+
+	geom_point(size=5, alpha=0.4)+
+	geom_smooth(alpha=0.4)+
+	geom_line(aes( group = `Period`), arrow=arrow(ends = "both", type = "closed"))+
+	scale_fill_brewer(palette="Set1")+
+  geom_label(
+		data=g,
+		size=2,
+		aes(label = `Period`, fill=`Period`)
+		)+
+	labs(
+      title = "California Unemployment Rate (%)", 
+      subtitle = "Note the Y-Axes",
+      x= "Year",
+      y = "Unemployment Rate(%)")+
+	theme(plot.title = element_text(margin = margin(t = 10, b = 10), size=18))
+
+remove(g)
+```
+
+### Florida
+```{r}
+h <- data.frame(
+	year = c(2004, 2008, 2012),
+	rate_unemployment = c(3, 5, 7),
+	label=unr %>% select(`Period`) %>% unique()
+	
+)
+
+unr %>% 
+	filter(State =="Florida") %>% 
+	ggplot(aes(x=year, y = `rate_unemployment`))+
+	geom_col(aes(fill=`Period`) , alpha=0.6, position = "dodge")+
+	geom_path(size=2)+
+	geom_point(size=5, alpha=0.4)+
+	geom_smooth(alpha=0.4)+
+	geom_line(aes( group = `Period`), arrow=arrow(ends = "both", type = "closed"))+
+	scale_fill_brewer(palette="Pastel2")+
+      	geom_label(
+		data=h,
+		size=2,
+		aes(label = `Period`, fill=`Period`)
+		)+
+	labs(
+      title = "Forida Unemployment Rate (%)", 
+      subtitle = "Note the Y-Axes",
+      x= "Year",
+      y = "Unemployment Rate(%)")+
+	theme(plot.title = element_text(margin = margin(t = 10, b = 10), size=18)) 
+remove(h)
+```
+
+### Massechusetts
+```{r}
+
+i <- data.frame(
+	year = c(2004, 2008, 2012),
+	rate_unemployment = c(2, 2.5, 3),
+	label=unr %>% select(`Period`) %>% unique()
+	
+)
+
+unr %>% 
+	filter(State =="Massechusetts") %>% 
+	ggplot(aes(x=year, y = `rate_unemployment`))+
+	geom_col(aes(fill=`Period`) , alpha=0.6, position = "dodge")+
+	geom_path(size=2)+
+	geom_point(size=5, alpha=0.4)+
+	geom_smooth(alpha=0.4)+
+	geom_line(aes( group = `Period`), arrow=arrow(ends = "both", type = "closed"))+
+	scale_fill_brewer(palette="Set3")+
+      	geom_label(
+		data=i,
+		size=2,
+		aes(label = `Period`, fill=`Period`)
+		)+
+	labs(
+      title = "Massechusetts Unemployment Rate (%)", 
+      subtitle = "Note the Y-Axes",
+      x= "Year",
+      y = "Unemployment Rate(%)")+
+	theme(plot.title = element_text(margin = margin(t = 10, b = 10), size=18))
+
+remove(i)
+```
+
+### Michigan
+```{r}
+
+j <- data.frame(
+	year = c(2004, 2008, 2012),
+	rate_unemployment = c(3, 5, 7),
+	label=unr %>% select(`Period`) %>% unique()
+	
+)
+
+unr %>% 
+	filter(State =="Michigan") %>% 
+	ggplot(aes(x=year, y = `rate_unemployment`))+
+	geom_col(aes(fill=`Period`) , alpha=0.6, position = "dodge")+
+	geom_path(size=2)+
+	geom_point(size=5, alpha=0.4)+
+	geom_smooth(alpha=0.4)+
+	geom_line(aes( group = `Period`), arrow=arrow(ends = "both", type = "closed"))+
+	scale_fill_brewer(palette="Accent")+
+    	geom_label(
+		data=j,
+		size=2,
+		aes(label = `Period`, fill=`Period`)
+		)+
+	labs(
+      title = "Michigan Unemploymnet Rate (%)", 
+      subtitle = "Note the Y-Axes",
+      x= "Year",
+      y = "Unemployment Rate(%)")+
+	theme(plot.title = element_text(margin = margin(t = 10, b = 10), size=18))
+remove(j) 
+```
+
+### North Carolina
+```{r}
+k <- data.frame(
+	year = c(2004, 2008, 2012),
+	rate_unemployment = c(3, 5, 7),
+	label=unr %>% select(`Period`) %>% unique()
+	
+)
+
+unr %>% 
+	filter(State =="North Carolina") %>% 
+	ggplot(aes(x=year, y = `rate_unemployment`))+
+	geom_col(aes(fill=`Period`) , alpha=0.6, position = "dodge")+
+	geom_path(size=2)+
+	geom_point(size=5, alpha=0.4)+
+	geom_smooth(alpha=0.4)+
+	geom_line(aes( group = `Period`), arrow=arrow(ends = "both", type = "closed"))+
+	scale_fill_brewer(palette="Paired")+
+      	geom_label(
+		data=k,
+		size=2,
+		aes(label = `Period`, fill=`Period`)
+		)+
+	labs(
+      title = "North Carolina Unemployment Rate (%)", 
+      subtitle = "Note the Y-Axes",
+      x= "Year",
+      y = "Unemployment Rate(%)")+
+	theme(plot.title = element_text(margin = margin(t = 10, b = 10), size=18))
+remove(k)
+```
+
+
+### Comparing on the same graph 
+```{r}
+
+c <- unr %>% 
+	group_by(State) %>% 
+	ggplot(aes(x=year, y = `rate_unemployment`, (color='State')))+
+	geom_point()+
+	geom_smooth	(aes(color=State))+
+	scale_fill_brewer(palette="Set1")+ # Use scale brewer to color the plot.
+	labs( # Add Title, subtitle and labels to the axes.
+	    title = "Education Rate by State",
+	    subtitle = "Dynamic Axes - highlights difference",
+	    fill="State",
+	    x= "Year",
+	    y = "Employment Rate")+
+	theme(legend.position="")
+
+
+
+d <- unr %>% 
+	group_by(State) %>% 
+	ggplot(aes(x=year, y = `rate_unemployment`, (color='State')))+
+	geom_point()+
+	geom_smooth	(aes(color=State))+
+	scale_y_continuous(
+		limits = c(0, 25), 
+		labels = function(x) paste0(x, "%")
+		) +
+	scale_fill_brewer(palette="Set1")+ # Use scale brewer to color the plot.
+	labs( # Add Title, subtitle and labels to the axes.
+	    title = "Employment Rate by State",
+	    subtitle = "Standard Axes - shows magnitude",
+	    fill="State",
+	    x= "Year",
+	    y = "")+
+	theme(legend.position="bottom")
+
+grid.arrange(c, d, ncol=2)
+remove(c, d)
+```
+
+# Unemployment Rate (Interactive)
+
+
+####  {}
+<h2>Its impact on California and Michigan.</h2>
+Add your analysis / findings / Annotations here.
+
+## Column{data-width=200}
+### Select States and Period
+```{r}
+
+selectInput(
+	inputId = "StateSelected",
+	label = "Please select the state",
+	choices = 
+		unr %>% 
+		select(State) %>% 
+		unique()
+)
+
+```
+
+```{r SelectPeriod}
+
+selectInput(
+	inputId = "PeriodSelected",
+	label = "Please select the Period",
+	choices = 
+		unr %>% 
+		select(Period) %>% 
+		unique()
+)
+
+```
+
+## Column{}
+### Plotting Unemployment Rate for Selected State and Period
+```{r}
+
+renderPlot({
+
+	unr %>%
+	filter(State ==input$StateSelected) %>%
+	filter(Period ==input$PeriodSelected) %>% 
+	ggplot(aes(x=year, y = `rate_unemployment`))+
+	geom_col(aes(fill=`Period`) , alpha=0.6, position = "dodge")+
+	geom_path(size=2)+
+	geom_point(size=5)+
+	geom_smooth(alpha=0.4)+
+	geom_line(
+		aes( group = `Period`),
+		arrow=arrow(ends = "both", type = "closed"))+
+	scale_fill_brewer(palette="Paired")+
+	labs(
+      title = input$StateSelected,
+      subtitle = "Unemployment Rate (%)",
+      x= "Year",
+      y = "Unemployment Rate(%)")+
+	theme(
+		plot.title =
+			element_text(margin = margin(t = 10, b = 10), size=18),
+		legend.position = 'top'
+		)
+
+})
+
+```
+
+### Table
+```{r}
+
+renderDT(
+	unr %>% 
+	select(Period, State, year,
+		   'Unemployment(%)' = `rate_unemployment`) %>% 
+	filter(State ==input$StateSelected) %>% 
+	filter(Period ==input$PeriodSelected)
+)
+
+```
+
+## Column{}
+### All Years for Selected States
+```{r}
+
+renderPlot({
+
+	unr %>%
+	filter(State ==input$StateSelected) %>%
+	ggplot(aes(x=year, y = `rate_unemployment`))+
+	geom_col(aes(fill=`Period`) , alpha=0.6, position = "dodge")+
+	geom_path(size=2)+
+	geom_point(size=5)+
+	geom_smooth(alpha=0.4)+
+	geom_line(
+		aes( group = `Period`),
+		arrow=arrow(ends = "both", type = "closed"))+
+	scale_fill_brewer(palette="Paired")+
+	labs(
+      title = input$StateSelected,
+      subtitle = "Unemployment Rates (%)",
+      x= "Year",
+      y = "Unemployment(%)")+
+	theme(
+		plot.title =
+			element_text(margin = margin(t = 10, b = 10), size=18),
+		legend.position = 'top'
+		)
+
+})
+
+```
+
+# Per Capita Income
+####  {}
+<h2>Its impact on Select States.</h2>
+Note that you can add regular HTML in your RMD and the browser will render the HTML. 
+It is important to note that the presentation of the data and the axes on the charts makes a significant impact on the visual being presented and the interpretation that the user makes.
+
+## Column{.tabset}
+
+### California
+```{r Per Capita Income}
+
+ca_l <- data.frame(
+	Year = c(2004, 2008, 2014),
+	per_capita_income = c(37000, 43000, 51000),
+	label=per_capita %>% select(`Period`) %>% unique()
+)
+
+
+per_capita %>% 
+	filter(State == "California") %>% 
+  ggplot(aes(x=Year, y = per_capita_income ))+
+geom_point(aes(colour = `Period`), size = 5)+
+  geom_smooth(alpha=0.3, se=TRUE, colour = "magenta 4")+
+  scale_color_manual(values = c("Pre-recession" = "thistle 3", "Recession" = "deeppink", "Post-recession" = "Slateblue 1"))+
+    geom_label(
+		data=ca_l,
+		size=2,
+		aes(label = `Period`)
+		)+
+	labs(
+      title = "Califronia Per Capita Income", 
+      subtitle = "Note the Y-Axes",
+      x= "Year",
+      y = "Per Capita Income")+
+	theme(plot.title = element_text(margin = margin(t = 10, b = 10), size=18))
+remove(ca_l)
+
+```
+
+### Florida
+```{r}
+
+fl_l <- data.frame(
+	Year = c(2004, 2008, 2014),
+	per_capita_income = c(36000, 40000, 44000),
+	label=per_capita %>% select(`Period`) %>% unique()
+)
+
+per_capita %>% 
+	filter(State == "Florida") %>% 
+  ggplot(aes(x=Year, y = per_capita_income))+
+geom_point(aes(colour = `Period`), size = 5)+
+  geom_smooth(alpha=0.3, se=TRUE, colour = "Red 2")+
+    scale_color_manual(values = c("Pre-recession" = "lightskyblue 2", "Recession" = "turquoise 2", "Post-recession" = "blue 2"))+
+      geom_label(
+		data=fl_l,
+		size=2,
+		aes(label = `Period`)
+		)+
+	labs(
+      title = "Florida Per Capita Income (%)", 
+      subtitle = "Note the Y-Axes",
+      x= "Year",
+      y = "Per Capita Income")+
+	theme(plot.title = element_text(margin = margin(t = 10, b = 10), size=18))
+remove(fl_l)
+
+```
+
+### Massachusetts
+```{r}
+
+m_l <- data.frame(
+	Year = c(2004, 2008, 2014),
+	per_capita_income = c(42000, 53000, 59000),
+	label=per_capita %>% select(`Period`) %>% unique()
+)
+
+per_capita %>% 
+	filter(State == "Massachusetts") %>% 
+  ggplot(aes(x=Year, y = per_capita_income))+
+geom_point(aes(colour = `Period`), size = 5)+
+  geom_smooth(alpha=0.3, se=TRUE, colour = "Orange 2")+
+    scale_color_manual(values = c("Pre-recession" = "darkolivegreen 2", "Recession" = "springgreen 2", "Post-recession" = "green 4"))+
+  geom_label(
+		data=m_l,
+		size=2,
+		aes(label = `Period`)
+		)+
+	labs(
+      title = "Massachusetts Per Capita Income (%)", 
+      subtitle = "Note the Y-Axes",
+      x= "Year",
+      y = "Per Capita Income")+
+	theme(plot.title = element_text(margin = margin(t = 10, b = 10), size=18))
+remove(m_l)
+
+```
+
+### North Carolina
+```{r}
+
+n_l <- data.frame(
+	Year = c(2004, 2008, 2014),
+	per_capita_income = c(30000, 37000, 41000),
+	label=per_capita %>% select(`Period`) %>% unique()
+)
+
+per_capita %>% 
+	filter(State == "North Carolina") %>% 
+  ggplot(aes(x=Year, y = per_capita_income))+
+geom_point(aes(colour = `Period`), size = 5)+
+  geom_smooth(alpha=0.3, se=TRUE, colour = "Yellow 2")+
+    scale_color_manual(values = c("Pre-recession" = "blueviolet", "Recession" = "violetred 2", "Post-recession" = "plum 2"))+
+    geom_label(
+		data=n_l,
+		size=2,
+		aes(label = `Period`)
+		)+
+	labs(
+      title = "North Carolina Per Capita Income (%)", 
+      subtitle = "Note the Y-Axes",
+      x= "Year",
+      y = "Per Capita Income")+
+	theme(plot.title = element_text(margin = margin(t = 10, b = 10), size=18))
+remove(n_l)
+
+```
+
+### Compare by states
+```{r}
+
+per_capita %>% 
+  ggplot(aes(x=Year, y = per_capita_income))+
+geom_point(aes(colour = `Period`), size = 5)+
+  geom_smooth(alpha=0.3, se=TRUE, colour = "Orange 3")+
+      scale_color_manual(values = c("Pre-recession" = "red", "Recession" = "blue", "Post-recession" = "green 4"))+
+	labs(
+      title = " Per Capita Income By States (%)", 
+      subtitle = "Note the Y-Axes",
+      x= "Year",
+      y = "Per Capita Income")+
+	theme(plot.title = element_text(margin = margin(t = 10, b = 10), size=18))+
+  facet_wrap(~ State)
+
+```
+
+# Education
+
+####  {}
+<h2>Its impact on Select States.</h2>
+Note that you can add regular HTML in your RMD and the browser will render the HTML. 
+It is important to note that the presentation of the data and the axes on the charts makes a significant impact on the visual being presented and the interpretation that the user makes.
+
+## Column{.tabset}
+
+### California
+```{r Education}
+
+cali <- data.frame(
+	year = c(2006, 2008, 2014),
+	education_rate = c(29, 29, 31),
+	label=educ_rate %>% select(`Period`) %>% unique()
+	
+)
+
+
+educ_rate %>% 
+	filter(State =="California") %>% 
+	ggplot(aes(x=year, y = `education_rate`))+
+	geom_col(aes(fill=`Period`) , alpha=0.6, position = "dodge")+
+	geom_path(size=2)+
+	geom_point(size=5, alpha=0.4)+
+	geom_smooth(alpha=0.4)+
+	geom_line(aes( group = `Period`), arrow=arrow(ends = "both", type = "closed"))+
+	scale_fill_brewer(palette="Set3")+
+      	geom_label(
+		data=cali,
+		size=2,
+		aes(label = `Period`, fill=`Period`)
+		)+
+	labs(
+      title = "California Education Rates (%)", 
+      subtitle = "Note the Y-Axes",
+      x= "Year",
+      y = "Education Rate(%)")+
+	theme(plot.title = element_text(margin = margin(t = 10, b = 10), size=18)) #top and bottom margins and font size
+remove(cali)
+
+```
+
+### Florida 
+```{r}
+flori <- data.frame(
+	year = c(2006, 2008, 2014),
+	education_rate = c(25, 25, 27),
+	label=educ_rate %>% select(`Period`) %>% unique()
+	
+)
+
+educ_rate %>% 
+	filter(State =="Florida") %>% 
+	ggplot(aes(x=year, y = `education_rate`))+
+	geom_col(aes(fill=`Period`) , alpha=0.6, position = "dodge")+
+	geom_path(size=2)+
+	geom_point(size=5, alpha=0.4)+
+	geom_smooth(alpha=0.4)+
+	geom_line(
+		aes( group = `Period`), 
+		arrow=arrow(ends = "both", type = "closed"))+
+	scale_fill_brewer(palette="PRGn")+
+        	geom_label(
+		data=flori,
+		size=2,
+		aes(label = `Period`, fill=`Period`)
+		)+
+	labs(
+      title = "Florida Education Rate (%)", 
+      subtitle = "Note the Y-Axes",
+      x= "Year",
+      y = "Education Rate (%)")+
+	theme(
+		plot.title = 
+			element_text(margin = margin(t = 5, b = 5), size=14),
+		legend.position="bottom"
+		)
+remove(flori)
+
+```
+
+
+### North Carolina
+```{r}
+nocar <- data.frame(
+	year = c(2006, 2008, 2014),
+	education_rate = c(25, 25, 25),
+	label=educ_rate %>% select(`Period`) %>% unique()
+	
+)
+
+educ_rate %>% 
+	filter(State =="North Carolina") %>% 
+	ggplot(aes(x=year, y = `education_rate`))+
+	geom_col(aes(fill=`Period`) , alpha=0.6, position = "dodge")+
+	geom_path(size=2)+
+	geom_point(size=5, alpha=0.4)+
+	geom_smooth(alpha=0.4)+
+	geom_line(aes( group = `Period`), arrow=arrow(ends = "both", type = "closed"))+
+	scale_fill_brewer(palette="Paired")+
+        	geom_label(
+		data=nocar,
+		size=2,
+		aes(label = `Period`, fill=`Period`)
+		)+
+	labs(
+      title = "North carolina Education Rates (%)", 
+      subtitle = "Note the Y-Axes",
+      x= "Year",
+      y = "Education Rate(%)")+
+	theme(plot.title = element_text(margin = margin(t = 10, b = 10), size=18)) #top and bottom margins and font size
+remove(nocar)
+
+```
+
+### Massachusetts
+```{r}
+ma <- data.frame(
+	year = c(2006, 2008, 2014),
+	education_rate = c(25, 25, 25),
+	label=educ_rate %>% select(`Period`) %>% unique()
+	
+)
+
+educ_rate %>% 
+	filter(State =="Massachusetts") %>% 
+	ggplot(aes(x=year, y = `education_rate`))+
+	geom_col(aes(fill=`Period`) , alpha=0.6, position = "dodge")+
+	geom_path(size=2)+
+	geom_point(size=5, alpha=0.4)+
+	geom_smooth(alpha=0.4)+
+	geom_line(aes( group = `Period`), arrow=arrow(ends = "both", type = "closed"))+
+	scale_fill_brewer(palette="Set1")+
+        	geom_label(
+		data=ma,
+		size=2,
+		aes(label = `Period`, fill=`Period`)
+		)+
+	labs(
+      title = "Massachusetts Education Rates (%)", 
+      subtitle = "Note the Y-Axes",
+      x= "Year",
+      y = "Education Rate(%)")+
+	theme(plot.title = element_text(margin = margin(t = 10, b = 10), size=18)) #top and bottom margins and font size
+remove(ma)
+
+```
+
+
+### Comparing
+```{r}
+
+a<-educ_rate %>% 
+	group_by(State) %>% 
+	ggplot(aes(x=year, y = `education_rate`, (color='State')))+
+	geom_point()+
+	geom_smooth	(aes(color=State))+
+	scale_fill_brewer(palette="PRGn")+ # Use scale brewer to color the plot.
+	labs( # Add Title, subtitle and labels to the axes.
+	    title = "Education Rate by State",
+	    subtitle = "Dynamic Axes - highlights difference",
+	    fill="State",
+	    x= "Year",
+	    y = "Education Rate")+
+	theme(legend.position="")
+
+
+
+b<-educ_rate %>% 
+	group_by(State) %>% 
+	ggplot(aes(x=year, y = `education_rate`, (color='State')))+
+	geom_point()+
+	geom_smooth	(aes(color=State))+
+	scale_y_continuous(
+		limits = c(0, 100), 
+		labels = function(x) paste0(x, "%")
+		) +
+	scale_fill_brewer(palette="PRGn")+ # Use scale brewer to color the plot.
+	labs( # Add Title, subtitle and labels to the axes.
+	    title = "Education Rate by State",
+	    subtitle = "Standard Axes - shows magnitude",
+	    fill="State",
+	    x= "Year",
+	    y = "")+
+	theme(legend.position="bottom")
+
+grid.arrange(a, b, ncol=2)
+remove(a, b)
+```
+
+
+
+# Select Vars
+
+#### 
+<h2>Its impact on States</h2>
+Add your analysis / findings / Annotations here.
+
+## Column{data-width=150}
+### Select States and Period
+```{r TheSelectPeriod}
+
+selectInput(
+	inputId = "ThePeriodSelected",
+	label = "Please select the Period",
+	choices = 
+		educ_rate %>% 
+		select(Period) %>% 
+		unique()
+)
+
+```
+
+```{r State}
+
+selectInput(
+	inputId = "TheStateSelected",
+	label = "Please select the state",
+	choices = 
+		educ_rate %>% 
+		select(State) %>% 
+		unique()
+)
+
+```
+
+```{r SelectVars}
+
+
+selectInput(
+	inputId = "VariablesSelected",
+	label = "Please select the Variable",
+	choices = c(educ_rate %>% select('year', 'education_rate') %>% names())
+)
+
+
+```
+
+
+## Column{}
+### Plotting Home Ownersip for Selected State and Period
+```{r}
+
+renderPlot({
+
+myData <- educ_rate %>%
+	filter(State ==input$TheStateSelected) %>%
+	select(Period, State, year,input$VariablesSelected)
+
+ggplot(myData,
+		aes_string( 
+			x= "year",
+			y = input$VariablesSelected))+
+	geom_col(aes(fill=`Period`) , alpha=0.6, position = "dodge")+
+	geom_point(size=5)+
+	geom_smooth(alpha=0.4, se=TRUE)+
+	scale_fill_brewer(palette="Paired")+
+	labs(
+      title = input$TheStateSelected,
+      subtitle = input$VariablesSelected,
+      x= "Year",
+      y = input$VariablesSelected)+
+	theme(
+		plot.title = element_text(
+			margin = margin(t = 10, b = 10), size=18),
+		legend.position = 'right'
+		)
+
+})
+
+```
+
+
+
+### Table{}
+```{r}
+
+renderDT(
+	educ_rate %>% 
+	filter(State ==input$TheStateSelected) %>% 
+	filter(Period ==input$ThePeriodSelected) %>% 
+	select(Period, State, year,input$VariablesSelected)
+)
+
+```
+
+
+# Compare States
+
+#### 
+<h2>Impact on States</h2>
+Add your analysis / findings / Annotations here.
+
+## Column{data-width=150}
+### Select Period and Variables
+```{r Clean Var Names}
+
+
+```
+
+
+```{r SelectVars2}
+
+
+
+selectInput(
+	inputId = "VariablesSelected1",
+	label = "Please select the Variable",
+	choices = c(educ_rate %>% select('year', 'education_rate') %>% names())
+)
+
+
+```
+
+```{r State1}
+
+selectInput(
+	inputId = "TheStateSelected1",
+	label = "Please select the first state",
+	choices = 
+	educ_rate %>% 
+		select(State) %>% 
+		unique()
+)
+
+```
+
+```{r State2}
+
+selectInput(
+	inputId = "TheStateSelected2",
+	label = "Please select the second state",
+	choices = 
+		educ_rate %>% 
+		arrange(desc(State)) %>% 
+		select(State) %>% 
+		unique()
+)
+
+```
+
+## Column{}
+
+### Compare State 1
+
+```{r}
+
+renderPlot({
+
+educ_rate %>%
+	filter(State ==input$TheStateSelected1) %>%
+	select(Period, State, year,input$VariablesSelected1) %>% 
+	ggplot(aes_string( 
+			x= "year",
+			y = input$VariablesSelected1))+
+	geom_col(aes(fill=`Period`) , alpha=0.6, position = "dodge")+
+	geom_point(size=5)+
+	geom_smooth(alpha=0.4, se=TRUE)+
+	scale_fill_brewer(palette="Paired")+
+	labs(
+      title = input$TheStateSelected1,
+      subtitle = input$VariablesSelected1,
+      x= "Year",
+      y = input$VariablesSelected1)+
+	theme(
+		plot.title = element_text(
+			margin = margin(t = 10, b = 10), size=18),
+		legend.position = 'top'
+		)
+
+})
+
+```
+
+
+### Compare State 2
+
+```{r}
+
+renderPlot({
+
+educ_rate %>%
+	filter(State ==input$TheStateSelected2) %>%
+	select(Period, State, year,input$VariablesSelected1) %>% 
+	ggplot(aes_string( 
+			x= "year",
+			y = input$VariablesSelected1))+
+	geom_col(aes(fill=`Period`) , alpha=0.6, position = "dodge")+
+	geom_point(size=5)+
+	geom_smooth(alpha=0.4, se=TRUE)+
+	scale_fill_brewer(palette="Paired")+
+	labs(
+      title = input$TheStateSelected2,
+      subtitle = input$VariablesSelected1,
+      x= "Year",
+      y = input$VariablesSelected1)+
+	theme(
+		plot.title = element_text(
+			margin = margin(t = 10, b = 10), size=18),
+		legend.position = 'top'
+		)
+
+})
+
+```
+
+
+# Housing Maps {data-orientation="rows"}
+
+## Row {data-height="100"}
+
+Homeownership Rates - Extend to other indicators - Add Text to compare rates.
+
+## Row {data-height="600"}
+
+### Pre-Recession
+```{r maps Pre-recession}
+us_map <- map_data('state')
+
+HousingData <- housing %>%
+	filter(Period == "Pre-recession") %>% 
+	group_by(State) %>% 
+	summarise(
+		MeanIndex = mean(`index`)
+	)
+
+#Convert to lower case.
+HousingData$region <- gsub('_',' ',tolower(HousingData$State))
+
+merged_data <- left_join(us_map, HousingData[, c('region', 'MeanIndex')], by='region')
+
+ 
+merged_data %>% 
+	ggplot()+
+	geom_polygon(aes(x=long, y=lat, group=group, fill=MeanIndex))+
+	theme_void()+
+   labs(title = 'Mean Housing Index', 
+        subtitle = 'Pre-Recession')
+```
+
+### Recession
+```{r maps Recession}
+
+# Recession Time Plot
+#---------------------------------
+HousingData <- housing %>%
+	filter(Period == "Recession") %>% 
+	group_by(State) %>% 
+	summarise(
+		MeanIndex = mean(`index`)
+	)
+
+#Convert to lower case.
+HousingData$region <- gsub('_',' ',tolower(HousingData$State))
+
+merged_data <- left_join(us_map, HousingData[, c('region', 'MeanIndex')], by='region')
+
+ 
+merged_data %>% 
+	ggplot()+
+	geom_polygon(aes(x=long, y=lat, group=group, fill=MeanIndex))+
+	theme_void()+
+   labs(title = 'Mean Housing Index', 
+        subtitle = 'Recession')
+
+
+```
+
+### Post-Recession
+
+```{r maps Post-Recession}
+
+# Post-Recession Time Plot
+#---------------------------------
+HousingData <- housing %>%
+	filter(Period == "Post-recession") %>% 
+	group_by(State) %>% 
+	summarise(
+		MeanIndex = mean(`index`)
+	)
+
+#Convert to lower case.
+HousingData$region <- gsub('_',' ',tolower(HousingData$State))
+
+merged_data <- left_join(us_map, HousingData[, c('region', 'MeanIndex')], by='region')
+
+ 
+merged_data %>% 
+	ggplot()+
+	geom_polygon(aes(x=long, y=lat, group=group, fill=MeanIndex))+
+	theme_void()+
+   labs(title = 'Mean Housing Index', 
+        subtitle = 'Post-recession')
+
+remove(HousingData, merged_data)
+```
+
+## Row
+### Table
+```{r}
+
+renderDT(
+	housing %>% 
+	select(Period, State, Date,
+		   'Index' = `index`)
+
+)
+
+```
+
+# Death Rates
+
+####  {}
+<h2>Its impact on Select States.</h2>
+Note that you can add regular HTML in your RMD and the browser will render the HTML. 
+It is important to note that the presentation of the data and the axes on the charts makes a significant impact on the visual being presented and the interpretation that the user makes.
+
+## Column{.tabset}
+
+### California 
+```{r}
+deaths %>% filter(State=="California") %>% 
+ggplot( aes(x = Year, y = `death_rate`)) +
+  geom_bar(stat='identity', aes(fill = `Period`))+
+  ggtitle("California Death Rate Due To Health Impact")+
+    	scale_fill_brewer(palette="Accent")+
+	labs(
+      title = "California Death Rates By Cause (%)", 
+      subtitle = "Note the Y-Axes",
+      x= "Year",
+      y = "Death Rate(%)")+
+	theme(plot.title = element_text(margin = margin(t = 10, b = 10), size=18))+
+  facet_wrap(~ Cause)
+```
+
+### Florida
+```{r}
+deaths %>% filter(State=="Florida") %>% 
+ggplot(aes(x = Year, y = `death_rate`)) +
+  geom_bar(stat='identity', aes(fill = `Period`))+
+  ggtitle("Florida Death Rate Due To Health Impact")+
+    	scale_fill_brewer(palette="Dark2")+
+	labs(
+      title = "Florida Death Rates By Cause (%)", 
+      subtitle = "Note the Y-Axes",
+      x= "Year",
+      y = "Death Rate(%)")+
+	theme(plot.title = element_text(margin = margin(t = 10, b = 10), size=18))+
+  facet_wrap(~ Cause)
+```
+
+### Massachusetts
+```{r}
+deaths %>% filter(State=="Massachusetts") %>% 
+ggplot(aes(x = Year, y = `death_rate`)) +
+  geom_bar(stat='identity', aes(fill = `Period`))+
+  ggtitle("Massachusetts Death Rate Due To Health Impact")+
+    	scale_fill_brewer(palette="Set3")+
+	labs(
+      title = "Massachusetts Death Rates By Cause (%)", 
+      subtitle = "Note the Y-Axes",
+      x= "Year",
+      y = "Death Rate(%)")+
+	theme(plot.title = element_text(margin = margin(t = 10, b = 10), size=18))+
+  facet_wrap(~ Cause)
+
+```
+
+### Michigan
+```{r}
+deaths %>% filter(State=="Michigan") %>% 
+ggplot(aes(x = Year, y = `death_rate`)) +
+  geom_bar(stat='identity', aes(fill = `Period`))+
+  ggtitle("Michigan Death Rate Due To Health Impact")+
+    	scale_fill_brewer(palette="Set1")+
+	labs(
+      title = "Michigan Death Rates By Cause (%)", 
+      subtitle = "Note the Y-Axes",
+      x= "Year",
+      y = "Death Rate(%)")+
+	theme(plot.title = element_text(margin = margin(t = 10, b = 10), size=18))+
+  facet_wrap(~ Cause)
+```
+
+### North Carolina
+```{r}
+deaths %>% filter(State=="North Carolina") %>% 
+ggplot(aes(x = Year, y = `death_rate`)) +
+  geom_bar(stat='identity', aes(fill = `Period`))+
+  ggtitle("North Carolina Death Rate Due To Health Impact")+
+  	scale_fill_brewer(palette="Paired")+
+	labs(
+      title = "North Carolina Death Rates By Cause (%)", 
+      subtitle = "Note the Y-Axes",
+      x= "Year",
+      y = "Death Rate(%)")+
+	theme(plot.title = element_text(margin = margin(t = 10, b = 10), size=18))+
+  facet_wrap(~ Cause)
+```
+
+### Cause Of Deaths
+```{r}
+
+ggplot(deaths, aes(x = Year, y = `death_rate`)) +
+  geom_bar(stat='identity', aes(fill = `Period`))+
+  ggtitle("Death Rates By Cause")+
+  facet_wrap(~ Cause)
+```
+
+
+# Mental Health Rate
+
+####  {}
+<h2>Its impact on Select States.</h2>
+Note that you can add regular HTML in your RMD and the browser will render the HTML. 
+It is important to note that the presentation of the data and the axes on the charts makes a significant impact on the visual being presented and the interpretation that the user makes.
+
+## Column{.tabset}
+
+### California
+```{r MentalHealthRate}
+
+Cal_lab <- data.frame(
+	Year = c(2004, 2008, 2014),
+	depressive_disorder = c(4.000, 3.500, 3.500),
+	label=ment_heal %>% select(`Period`) %>% unique()
+)
+
+ment_heal %>% 
+	filter(State =="California") %>% 
+	ggplot(aes(x=Year, y = `depressive_disorder`))+
+	geom_line( alpha=0.9, position = "identity",colour = "dark blue", size=1)+
+	geom_point(color="Orange", size=3, alpha=0.9)+
+    geom_label(
+		data=Cal_lab,
+		size=2,
+		aes(label = `Period`)
+		)+
+	labs(
+      title = "California Depressive Disorder Rate (%)", 
+      subtitle = "Note the Y-Axes",
+      x= "Year",
+      y = "Depressive Disorder (%)")+
+	theme(plot.title = element_text(margin = margin(t = 10, b = 10), size=18))
+remove(Cal_lab)
+
+```
+
+### Florida
+```{r}
+
+flo_lab <- data.frame(
+	Year = c(2004, 2008, 2014),
+	depressive_disorder = c(3.350, 3.370, 3.500),
+	label=ment_heal %>% select(`Period`) %>% unique()
+)
+
+ment_heal %>% 
+	filter(State =="Florida") %>% 
+	ggplot(aes(x=Year, y = `depressive_disorder`))+
+	geom_line( alpha=0.9, position = "identity", colour = "maroon", size=1)+
+	geom_point(color="Yellow", size=3, alpha=0.9)+
+  geom_label(
+		data=flo_lab,
+		size=2,
+		aes(label = `Period`)
+		)+
+	labs(
+      title = "Florida Depressive Disorder Rate (%)", 
+      subtitle = "Note the Y-Axes",
+      x= "Year",
+      y = "Depressive Disorder (%)")+
+	theme(plot.title = element_text(margin = margin(t = 10, b = 10), size=18))
+remove(flo_lab)
+```
+
+### Massachusetts
+```{r}
+
+ma_lab <- data.frame(
+	Year = c(2004, 2008, 2014),
+	depressive_disorder = c(5.130, 5.140, 5.000),
+	label=ment_heal %>% select(`Period`) %>% unique()
+)
+
+ment_heal %>% 
+	filter(State =="Massachusetts") %>% 
+	ggplot(aes(x=Year, y = `depressive_disorder`))+
+	geom_line( alpha=0.9, position = "identity", colour = "dark green", size=1)+
+	geom_point(color="Red", size=3, alpha=0.9)+
+    geom_label(
+		data=ma_lab,
+		size=2,
+		aes(label = `Period`)
+		)+
+	labs(
+      title = "Massachusetts Depressive Disorder Rate (%)", 
+      subtitle = "Note the Y-Axes",
+      x= "Year",
+      y = "Depressive Disorder (%)")+
+	theme(plot.title = element_text(margin = margin(t = 10, b = 10), size=18))
+remove(ma_lab)
+```
+
+### North Carolina
+```{r}
+
+nc_lab <- data.frame(
+	Year = c(2004, 2008, 2014),
+	depressive_disorder = c(4.200, 4.430, 4.400),
+	label=ment_heal %>% select(`Period`) %>% unique()
+)
+
+
+ment_heal %>% 
+	filter(State =="North Carolina") %>% 
+	ggplot(aes(x=Year, y = `depressive_disorder`))+
+	geom_line( alpha=0.9, position = "identity", colour = "violet", size=1)+
+	geom_point(color="Blue", size=3, alpha=0.9)+
+      geom_label(
+		data=nc_lab,
+		size=2,
+		aes(label = `Period`)
+		)+
+	labs(
+      title = "North Carolina Depressive Disorder Rate (%)", 
+      subtitle = "Note the Y-Axes",
+      x= "Year",
+      y = "Depressive Disorder (%)")+
+	theme(plot.title = element_text(margin = margin(t = 10, b = 10), size=18))
+remove(nc_lab)
+```
+
+
+### Comparing on the same graph 
+```{r}
+
+
+e<-ment_heal %>% 
+	group_by(State) %>% 
+	ggplot(aes(x=Year, y = `depressive_disorder`, (color='State')))+
+	geom_point()+
+	geom_smooth	(aes(color=State))+
+	scale_fill_brewer(palette="Set1")+ # Use scale brewer to color the plot.
+	labs( 
+	    title = "Depressive Disorder by State",
+	    subtitle = "Dynamic Axes - highlights difference",
+	    fill="State",
+	    x= "Year",
+	    y = "Depressive Disorder Rate")+
+	theme(legend.position="")
+
+
+
+f<- ment_heal %>% 
+	group_by(State) %>% 
+	ggplot(aes(x=Year, y = `depressive_disorder`, (color='State')))+
+	geom_point()+
+	geom_smooth	(aes(color=State))+
+	scale_y_continuous(
+		limits = c(0, 100), 
+		labels = function(x) paste0(x, "%")
+		) +
+	scale_fill_brewer(palette="Set1")+ # Use scale brewer to color the plot.
+	labs( # Add Title, subtitle and labels to the axes.
+	    title = "Depressive Disorder by State",
+	    subtitle = "Standard Axes - shows magnitude",
+	    fill="State",
+	    x= "Year",
+	    y = "")+
+	theme(legend.position="bottom")
+
+grid.arrange(e, f, ncol=2)
+remove(e, f)
+```
+
